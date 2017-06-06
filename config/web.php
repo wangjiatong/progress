@@ -7,6 +7,7 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'components' => [
+        'language' => 'zh-CN',
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'zZ6ruOBvs7LMt-BWpykCvUBnFXNZPN2c',
@@ -15,7 +16,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => 'app\models\models\User',
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
@@ -38,14 +39,23 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
-        /*
+        
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
             ],
         ],
-        */
+        
+    ],
+    //redactor富文本编辑器
+    'modules' => [
+        'redactor' => [
+            'class' => 'yii\redactor\RedactorModule',
+            'uploadDir' => './uploads',  // 比如这里可以填写 ./uploads
+            'uploadUrl' => '图片可访问地址',
+            'imageAllowExtensions'=>['jpg','png','gif'],
+        ],
     ],
     'params' => $params,
 ];
