@@ -44,6 +44,14 @@ $user_ids = explode(', ', $model->partner);
         ?>
 </div>
   <div>
+  <?php
+        foreach ($progress_ids as $p)
+        {
+            $message = UnreadMessage::find()->where(['project_id' => $model->id, 'user_id' => Yii::$app->user->identity->id, 'progress_id' => $p['progress_id']])->one();
+            $message->status = 1;
+            $message->save();
+        }
+  ?>
   <?php $form = ActiveForm::begin() ?>
   <?= $form->field($comment, 'comment')->widget(Redactor::className()) ?>
   <?= Html::submitButton('提交') ?>

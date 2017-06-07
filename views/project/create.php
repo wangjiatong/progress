@@ -6,7 +6,10 @@ use yii\helpers\Html;
 use yii\redactor\widgets\Redactor;
 use app\models\models\User;
 ?>
-
+<ol class="breadcrumb">
+  <li><a href="#">项目</a></li>
+  <li class="active">发起项目</li>
+</ol>
 <?php $form = ActiveForm::begin() ?>
 
 <?= $form->field($model, 'project_name')->textInput() ?>

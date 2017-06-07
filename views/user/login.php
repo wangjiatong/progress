@@ -11,6 +11,9 @@ $this->title = '登录';
 // $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-login">
+    <ol class="breadcrumb">
+      <li class="active">登录</li>
+    </ol>
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p></p>

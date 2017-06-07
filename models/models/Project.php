@@ -3,7 +3,7 @@
 namespace app\models\models;
 
 use Yii;
-
+use yii\db\ActiveRecord;
 /**
  * This is the model class for table "project".
  *
@@ -14,7 +14,7 @@ use Yii;
  * @property string $partner
  * @property string $created_at
  */
-class Project extends \yii\db\ActiveRecord
+class Project extends ActiveRecord
 {
     /**
      * @inheritdoc
@@ -30,11 +30,9 @@ class Project extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['project_name', 'project_content', 'starter', 'partner', 'created_at'], 'required'],
+            [['project_name', 'project_content', 'partner'], 'required'],
             [['project_content'], 'string'],
-            [['starter'], 'integer'],
-            [['project_name', 'created_at'], 'string', 'max' => 30],
-            [['partner'], 'string', 'max' => 255],
+            ['project_name', 'string', 'max' => 30],
         ];
     }
 
@@ -45,11 +43,12 @@ class Project extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'project_name' => 'Project Name',
-            'project_content' => 'Project Content',
-            'starter' => 'Starter',
-            'partner' => 'Partner',
-            'created_at' => 'Created At',
+            'project_name' => '项目名称',
+            'project_content' => '项目内容',
+            'starter' => '发起人',
+            'partner' => '参与人',
+            'created_at' => '创建时间',
         ];
     }
+    
 }

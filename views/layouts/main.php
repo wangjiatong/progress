@@ -40,6 +40,8 @@ AppAsset::register($this);
 //             ['label' => 'About', 'url' => ['/site/about']],
 //             ['label' => 'Contact', 'url' => ['/site/contact']],
             ['label' => '发起项目', 'url' => ['project/create']],
+            ['label' => '查看项目', 'url' => ['project/index']],
+            ['label' => '我的项目', 'url' => ['project/mine']],
             ['label' => '注册', 'url' => ['user/signup']],
             Yii::$app->user->isGuest ? (
                 ['label' => '登录', 'url' => ['user/login']]

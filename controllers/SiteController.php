@@ -70,34 +70,21 @@ class SiteController extends BaseController
         $my_id = Yii::$app->user->identity->id;
         if($projects = ProjectUserRelations::find()->where(['user_id' => $my_id])->select(['project_id'])->asArray()->all())
         {
-//             var_dump($projects);
-//             exit();
-//             foreach ($projects as $p)
-//             {
-                
-// //                 var_dump($p['project_id']);
-//                 $model = Project::find()->where(['id' => $p['project_id']])->asArray()->one();
-// //                 var_dump($model);
-//                 for($i = 0; $i < count($projects); $i++)
-//                 {
-//                     $models[$i] = $model;
-//                 }
-            
-//             }
-//             $models = [];
             for($i = 0; $i < count($projects); $i++)
             {
                 $project_id = $projects[$i]['project_id'];
                 $model = Project::find()->where(['id' => $project_id])->asArray()->one();
                 $models[$i] = $model;
             }
-//             var_dump($models);
-//             exit();
-            return $this->render('index', [
+            return $this->render('newMessage', [
                 'models' => $models,
             ]);
+            
+        }elseif(!$projects){
+            return $this->render('index');
+        }else{
+            return $this->redirect(['error/index']);
         }
-        return $this->redirect(['error/index']);
     }
 
     /**

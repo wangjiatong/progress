@@ -7,6 +7,9 @@ use yii\helpers\Html;
 $this->title = '用户注册';
 ?>
 <div class="user-signup">
+    <ol class="breadcrumb">
+      <li class="active">用户注册</li>
+    </ol>
     <div class="row">
         <div class="col-md-3 col-md-offset-4">
             <h1><?= Html::encode($this->title) ?></h1>
