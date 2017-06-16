@@ -1,7 +1,8 @@
 <?php
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-
+use app\models\models\Company;
+use yii\captcha\Captcha;
 
 
 $this->title = '用户注册';
@@ -42,6 +43,16 @@ $this->title = '用户注册';
     <div class="row">
         <div class="col-md-3 col-md-offset-4">
             <?= $form->field($model, 'name')->textInput() ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-md-offset-4">
+            <?= $form->field($model, 'company')->dropDownList(Company::find()->select('company_name')->indexBy('id')->column()) ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-md-offset-4">
+            <?= $form->field($model, 'verifyCode')->widget(Captcha::className()) ?>
         </div>
     </div>
     <div class="row">

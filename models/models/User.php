@@ -35,6 +35,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['username', 'passwd', 'email', 'phone', 'name'], 'required'],
             [['username', 'passwd', 'email', 'phone'], 'string', 'max' => 30],
             [['name'], 'string', 'max' => 10],
+            ['company', 'required'],
         ];
     }
 
@@ -50,6 +51,7 @@ class User extends ActiveRecord implements IdentityInterface
             'email' => '电子邮箱',
             'phone' => '电话',
             'name' => '姓名',
+            'company' => '所属公司',
         ];
     }
     
@@ -60,8 +62,8 @@ class User extends ActiveRecord implements IdentityInterface
 
     public static function findIdentityByAccessToken($token, $type = null)
     {
-//         return static::findOne(['access_token' => $token]);
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+        return static::findOne(['access_token' => $token]);
+//         throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
     }
 
     public function getId()
@@ -71,14 +73,14 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function getAuthKey()
     {
-//         return $this->authKey;
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+        return $this->auth_key;
+//         throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
     }
 
     public function validateAuthKey($authKey)
     {
-//         return $this->authKey === $authKey;
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+        return $this->auth_key === $auth_key;
+//         throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
     }
     /**
      * Finds user by username
@@ -99,5 +101,30 @@ class User extends ActiveRecord implements IdentityInterface
     public function validatePassword($password)
     {
         return $this->passwd === $password;
+    }
+    
+    public function generateAuthKey()
+    {
+        $this->auth_key = Yii::$app->security->generateRandomString();
+    }
+    //获取账号状态
+    public static function userStatus($status)
+    {
+        switch ($status)
+        {
+            case 1: return '已激活'; break;
+            case 0: return '未激活'; break;
+        }
+    }
+    //设置账号激活状态, $status = 0 或 1
+    public static function setStatus($user_id, $status)
+    {
+        $user = User::findOne($user_id);
+        //如果用户本身的状态和要设置的状态不一样
+        if($user->status !== $status)
+        {
+            $user->status = $status;
+            return $user->save();
+        }
     }
 }

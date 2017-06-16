@@ -32,7 +32,7 @@ class Progress extends ActiveRecord
         return [
 //             [['id', 'pro_id', 'speaker_id', 'comment', 'created_at'], 'required'],
 //             [['id', 'pro_id', 'speaker_id'], 'integer'],
-            [['comment'], 'string'],
+                ['comment', 'required'],
 //             [['created_at'], 'string', 'max' => 30],
         ];
     }

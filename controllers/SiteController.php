@@ -11,6 +11,7 @@ use app\models\LoginForm;
 use app\controllers\common\BaseController;
 use app\models\models\Project;
 use app\models\relations\ProjectUserRelations;
+use yii\web\NotFoundHttpException;
 
 class SiteController extends BaseController
 {
@@ -68,7 +69,7 @@ class SiteController extends BaseController
             return $this->redirect(['user/login']);
         }
         $my_id = Yii::$app->user->identity->id;
-        if($projects = ProjectUserRelations::find()->where(['user_id' => $my_id])->select(['project_id'])->asArray()->all())
+        if($projects = ProjectUserRelations::find()->where(['user_id' => $my_id])->select(['project_id'])->orderBy('id desc')->asArray()->all())
         {
             for($i = 0; $i < count($projects); $i++)
             {
@@ -83,7 +84,7 @@ class SiteController extends BaseController
         }elseif(!$projects){
             return $this->render('index');
         }else{
-            return $this->redirect(['error/index']);
+            throw new NotFoundHttpException();
         }
     }
 

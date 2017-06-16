@@ -6,6 +6,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use app\controllers\common\BaseController;
 
 $this->title = '登录';
 // $this->params['breadcrumbs'][] = $this->title;
@@ -15,7 +16,8 @@ $this->title = '登录';
       <li class="active">登录</li>
     </ol>
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <!-- 注册成功后跳转登录页提示注册成功 -->
+    <?= BaseController::displaySessionMessage('signup_success') ?>
     <p></p>
 
     <?php $form = ActiveForm::begin([

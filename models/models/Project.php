@@ -24,6 +24,12 @@ class Project extends ActiveRecord
         return 'project';
     }
 
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios['update'] = ['project_name', 'project_content'];
+        return $scenarios;
+    }
     /**
      * @inheritdoc
      */
@@ -31,8 +37,9 @@ class Project extends ActiveRecord
     {
         return [
             [['project_name', 'project_content', 'partner'], 'required'],
-            [['project_content'], 'string'],
-            ['project_name', 'string', 'max' => 30],
+            [['project_content'], 'string', 'on' => ['update']],
+            ['project_name', 'string', 'max' => 30, 'on' => ['update']],
+            [['project_name', 'project_content'], 'required', 'on' => 'update'],
         ];
     }
 
