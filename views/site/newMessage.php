@@ -2,12 +2,14 @@
 
 /* @var $this yii\web\View */
 use app\models\models\UnreadMessage;
+use app\controllers\common\BaseController;
 $this->title = '项目流程管理系统-首页';
 ?>
 <div class="site-index">
     <ol class="breadcrumb">
       <li class="active">首页</li>
     </ol>
+    <?= BaseController::displaySessionMessage('new_project') ?>
     <?php foreach ($models as $m): ?>
     <?php $message_number = UnreadMessage::find()->where(['project_id' =>$m['id'], 'user_id' => Yii::$app->user->identity->id, 'status' => 0])->count();//接收新消息数 ?>
     <?php if($message_number !== "0"){?>

@@ -5,6 +5,7 @@ use yii\base\Model;
 use app\models\models\Project;
 use Yii;
 use app\models\relations\ProjectUserRelations;
+use app\models\relations\NewProjectRelations;
 use app\models\relations\app\models\relations;
 
 class ProjectForm extends Model
@@ -67,6 +68,11 @@ class ProjectForm extends Model
                 $project_user->project_id = $project->id;
                 $project_user->user_id = $p;
                 $project_user->save();
+                //生成新项目-用户关系
+                $new_project = new NewProjectRelations();
+                $new_project->project_id = $project->id;
+                $new_project->user_id = $p;
+                $new_project->save();
             }
             return true;
         }else{

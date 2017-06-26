@@ -17,7 +17,7 @@ use yii\bootstrap\Alert;
 
 <?= $form->field($model, 'project_content')->widget(Redactor::className()) ?>
 
-<?= $form->field($model, 'partner')->checkboxList(User::find()->select(['name'])->indexBy('id')->column()); ?>
+<?= $form->field($model, 'partner')->checkboxList(User::find()->select(['name'])->where(['is_admin' => 0, 'status' => 1])->indexBy('id')->column()); ?>
 
 <?= Html::submitButton('提交')?>
 

@@ -1,6 +1,6 @@
 <?php
 use yii\bootstrap\Alert;
-
+use app\controllers\common\BaseController;
 
 ?>
 <ol class="breadcrumb">

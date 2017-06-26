@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     {
                         return Html::a('激活', ['user/enable-user', 'id' => $data->id], [
                             'class' => 'btn btn-success btn-xs',
-                            'options' => [
+                            'data' => [
                                 'confirm' => '你确定要激活该用户吗？',
                                 'method' => 'post',
                             ],
@@ -55,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     {
                         return Html::a('取消激活', ['user/disable-user', 'id' => $data->id], [
                             'class' => 'btn btn-primary btn-xs',
-                            'options' => [
+                            'data' => [
                                 'confirm' => '你确定要取消激活该用户吗？',
                                 'method' => 'post',
                             ],
@@ -71,7 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function($data){
                     return Html::a('删除', ['user/delete-user', 'id' => $data->id], [
                         'class' => 'btn btn-danger btn-xs',
-                        'options' => [
+                        'data' => [
                             'confirm' => '你确定要删除该用户吗？',
                             'method' => 'post',
                         ],    

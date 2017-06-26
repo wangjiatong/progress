@@ -28,6 +28,18 @@ $config = [
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
             'useFileTransport' => true,
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'mail.ewinjade.com',  //每种邮箱的host配置不一样
+                'username' => 'mail',
+                'password' => 'ewinjj6688',
+                //               'port' => '465',
+            //               'encryption' => 'ssl',
+            ],
+            'messageConfig'=>[
+                'charset'=>'UTF-8',
+                'from'=>['mail@ewinjade.com'=>'翌银玖德']
+            ],
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,

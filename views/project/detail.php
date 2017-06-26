@@ -29,8 +29,6 @@ $color_arr = ['primary', 'success', 'info', 'warning', 'danger'];
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="home">
         <br />
-        <?= $model->project_content ?>
-        <br/>
         <?php 
             if( Yii::$app->getSession()->hasFlash('comment_deleted') ) {
                 echo Alert::widget([
@@ -61,6 +59,8 @@ $color_arr = ['primary', 'success', 'info', 'warning', 'danger'];
                 ]);
             }
         ?>
+        <?= $model->project_content ?>
+        <br/>
     </div>
     <div role="tabpanel" class="tab-pane" id="profile">
         <br />
@@ -81,9 +81,9 @@ $color_arr = ['primary', 'success', 'info', 'warning', 'danger'];
     </div>
     <div role="tabpanel" class="tab-pane" id="messages">
         <br />
+        <?php $i = 0; ?>
         <?php foreach ($progresses as $progress): ?>
                 <?php 
-                    $i = 0;
                     if($i == 4)
                     {
                         $i = 0;
@@ -128,6 +128,13 @@ $color_arr = ['primary', 'success', 'info', 'warning', 'danger'];
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => '你确定要删除该项目？',
+                'method' => 'post',    
+            ],
+        ]) ?>
+        <?= Html::a('管理参与人', ['project/partner', 'id' => $model->id], [
+            'class' => 'btn btn-success',
+            'data' => [
+                'confirm' => '你确定要编辑参与人吗？',
                 'method' => 'post',    
             ],
         ]) ?>

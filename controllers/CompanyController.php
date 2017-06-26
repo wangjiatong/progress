@@ -8,6 +8,7 @@ use app\models\search\CompanySearch;
 use app\controllers\common\BaseController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * CompanyController implements the CRUD actions for Company model.
@@ -20,6 +21,27 @@ class CompanyController extends BaseController
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'denyCallback' => function ($rule, $action) {
+                    $this->sendSessionMessage('user_is_not_admin', '您不是管理员，无权操作！');
+                    return $this->redirect(['error/index']);
+                },
+            'rules' => [
+                [
+                    'allow' => true,
+                    'roles' => ['@'],
+                    'matchCallback' => function($rule, $action){
+                        return $this->isAdmin();
+                    },
+                ],   
+                [
+                    'allow' => false,
+                    'roles' => ['?'],
+                ],
+            ],
+            
+        ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [

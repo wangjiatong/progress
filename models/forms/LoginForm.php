@@ -4,6 +4,7 @@ namespace app\models\forms;
 use yii\base\Model;
 use app\models\models\User;
 use Yii;
+use app\models\behaviors\ValidateAccountStatus;
 
 class LoginForm extends Model
 {

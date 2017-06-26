@@ -3,43 +3,45 @@
 namespace app\controllers;
 
 use Yii;
-use yii\filters\AccessControl;
+// use yii\filters\AccessControl;
 // use yii\web\Controller;
-use yii\filters\VerbFilter;
-use app\models\LoginForm;
+// use yii\filters\VerbFilter;
+// use app\models\LoginForm;
 // use app\models\ContactForm;
 use app\controllers\common\BaseController;
 use app\models\models\Project;
 use app\models\relations\ProjectUserRelations;
 use yii\web\NotFoundHttpException;
+use app\models\relations\NewProjectRelations;
 
 class SiteController extends BaseController
 {
     /**
      * @inheritdoc
      */
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['logout'],
-                'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
-        ];
-    }
+//     public function behaviors()
+//     {
+        
+//         return [
+//             'access' => [
+//                 'class' => AccessControl::className(),
+//                 'only' => ['logout', 'index'],
+//                 'rules' => [
+//                     [
+//                         'actions' => ['logout', 'index'],
+//                         'allow' => true,
+//                         'roles' => ['@'],
+//                     ],
+//                 ],
+//             ],
+//             'verbs' => [
+//                 'class' => VerbFilter::className(),
+//                 'actions' => [
+//                     'logout' => ['post'],
+//                 ],
+//             ],
+//         ];
+//     }
 
     /**
      * @inheritdoc
@@ -64,10 +66,19 @@ class SiteController extends BaseController
      */
     public function actionIndex()
     {
-        if(Yii::$app->user->isGuest)
+//         if(Yii::$app->user->isGuest)
+//         {
+//             return $this->redirect(['user/login']);
+//         }
+        //查询用户名下是否有新的项目
+        if($new_project = NewProjectRelations::find()->where(['user_id' => Yii::$app->user->identity->id, 'is_new' => 1])->all())
         {
-            return $this->redirect(['user/login']);
+            $this->sendSessionMessage('new_project', '您已参与新的项目，请到“查看项目”中浏览！');
         }
+        
+        
+        
+        
         $my_id = Yii::$app->user->identity->id;
         if($projects = ProjectUserRelations::find()->where(['user_id' => $my_id])->select(['project_id'])->orderBy('id desc')->asArray()->all())
         {
@@ -117,7 +128,7 @@ class SiteController extends BaseController
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+        return $this->redirect(['user/login']);
     }
 
     /**

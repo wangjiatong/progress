@@ -9,6 +9,8 @@ use app\models\relations\ProjectUserRelations;
 use app\models\models\Progress;
 use app\models\models\UnreadMessage;
 use yii\web\NotFoundHttpException;
+use app\models\models\User;
+use app\models\relations\NewProjectRelations;
 
 class ProjectController extends BaseController
 {
@@ -89,6 +91,11 @@ class ProjectController extends BaseController
     
     public function actionDetail($id)
     {
+        //阅览过新项目后删除 新项目-用户的关系
+        if($new_project = NewProjectRelations::find()->where(['project_id' => $id, 'user_id' => Yii::$app->user->identity->id])->one())
+        {
+            $new_project->delete();
+        }
         //生成用于项目留言的模型
         $comment = new Progress();
         //判断POST
@@ -164,6 +171,11 @@ class ProjectController extends BaseController
                 {
                     ProjectUserRelations::deleteAll('project_id=:id', [':id' => $id]);
                 }
+                if(NewProjectRelations::find()->where(['project_id' => $id])->one())
+                {
+                    NewProjectRelations::deleteAll('project_id=:id', [':id' => $id]);
+                }
+                $this->sendSessionMessage('project_deleted');
                 return $this->redirect(['project/mine']);
             }else{
                 throw new NotFoundHttpException('项目删除失败！');
@@ -209,7 +221,95 @@ class ProjectController extends BaseController
         }
         throw new NotFoundHttpException('删除进度汇报失败！');
     }
+    //管理参与人页面
+    public function actionPartner($id)
+    {
+        $project = Project::findOne($id);
+        if($project->starter == Yii::$app->user->identity->id)
+        {       
+            return $this->render('partner', [
+                'project' => $project,
+            ]);
+        }
+    }
+    //删除参与人的操作
+    public function actionDeletePartner($user_id, $project_id)
+    {
+        $project = Project::findOne($project_id);
+        if($project->starter == Yii::$app->user->identity->id)
+        {
+            $old_partner = explode(', ', $project->partner);
+            $new_partner = $this->in_array_delete($user_id, $old_partner);
+            $project->partner = implode(', ', $new_partner);
+            if($project->save())
+            {
+                if(ProjectUserRelations::deleteAll('user_id=:user_id and project_id=:project_id', [':user_id' => $user_id, ':project_id' => $project_id]) &&
+                    NewProjectRelations::deleteAll('project_id=:project_id and user_id=:user_id', [':project_id' => $project_id, ':user_id' => $user_id]) &&
+                    UnreadMessage::deleteAll('project_id=:project_id and user_id=:user_id', [':project_id' => $project_id, ':user_id' => $user_id]))
+                {
+                    $this->sendSessionMessage('partner_deleted', '删除参与人成功！');
+                    return $this->redirect(Yii::$app->request->referrer);
+                }
+            }
+            
+        }
+    }
+    //添加参与人的页面
+    public function actionPartnerAdd($id)
+    {
+        $project = Project::findOne($id);
+        if($project->starter == Yii::$app->user->identity->id)
+        {
+            $oldPartner = explode(', ', Project::findOne($id)->partner);
+            $allUser = User::find()->select('id')->all();
+            $newPartner = [];
+            foreach ($allUser as $a)
+            {
+                if(!in_array($a['id'], $oldPartner))
+                {
+                    $newPartner[] = $a['id'];
+                }
+            }
+            
+            if($newPartner == null)
+            {
+                $this->sendSessionMessage('no_new_partner', '暂无可以新增的参与人！');
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+            
+            return $this->render('partnerAdd', [
+                'newPartner' => $newPartner,
+                'id' => $id,
+            ]);
+        }
+    }
+    //添加参与人的操作
+    public function actionAddPartner($user_id, $project_id)
+    {
+        $project = Project::findOne($project_id);
+        if($project->starter == Yii::$app->user->identity->id)
+        {
+            $old_partner = explode(', ', $project->partner);
+            $old_partner[] = $user_id;
+            $project->partner = implode(', ', $old_partner);
+            if($project->save())
+            {
+                $project_user = new ProjectUserRelations();
+                $project_user->user_id = $user_id;
+                $project_user->project_id = $project_id;
+                //为添加的新参与人生成新项目-用户关系
+                $new_project = new NewProjectRelations();
+                $new_project->project_id = $project_id;
+                $new_project->user_id = $user_id;
+                if($project_user->save() && $new_project->save())
+                {
+                    $this->sendSessionMessage('new_partner_added', '添加参与人成功！');
+                    return $this->redirect(['project/partner', 'id' => $project_id]);
+                }
+            }
     
+        }
+    }
     
     
     

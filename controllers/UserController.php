@@ -13,9 +13,37 @@ use app\models\models\UnreadMessage;
 use app\models\relations\ProjectUserRelations;
 use app\models\models\Project;
 use app\models\models\Progress;
+use yii\filters\AccessControl;
 
 class UserController extends BaseController
 {
+    public function behaviors()
+    {
+        return [
+            'acess' => [
+                'class' => AccessControl::className(),
+                'denyCallback' => function ($rule, $action) {
+                    $this->sendSessionMessage('user_is_not_admin', '您不是管理员，无权操作！');
+                    return $this->redirect(['error/index']);
+                },
+                'rules' => [
+                    [
+                        'actions' => ['signup', 'login'],
+                        'allow' => true,
+                        'roles' => ['?'],    
+                    ],    
+                    [
+                        'actions' => ['manage', 'enable-user', 'disable-user', 'delete-user'],    
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function($rule, $action){
+                            return $this->isAdmin();    
+                        },
+                    ],
+                ],
+            ],      
+        ];
+    }
     public function actions()
     {
         return [
@@ -103,26 +131,48 @@ class UserController extends BaseController
             $user = $this->findModel($id);
             if($user->delete())
             {
-                UserCompanyRelations::deleteAll('user_id=:id', [':id' => $id]);
-                UnreadMessage::deleteAll('user_id=:id', [':id' => $id]);
-                Project::deleteAll('starter=:id', [':id' => $id]);
-                Progress::deleteAll('speaker_id=:id', [':id' => $id]);
-                
-                $project_user = ProjectUserRelations::find()->where(['user_id' => $id])->all();
-                
-                foreach ($project_user as $p)
+                //如果被删除用户是某项目发起人，删除被删除用户发起的项目及与该项目有对应关系的
+                if($project = Project::find()->where(['starter' => $id])->all())
                 {
-                    $project = Project::findOne($p);
-                    $partner = explode(', ', $project->partner);
-                    if(!in_array($p, $partner))
+                    foreach ($project as $p)
                     {
-                        continue;
-                    }else{
-                        $project->partner = implode(', ', $this->in_array_delete($p, $partner));
-                        $project->save();
+                        //删除该项目的项目-用户对应关系
+                        ProjectUserRelations::deleteAll('project_id=:id', [':id' => $p['id']]);
+                        //删除该项目的所有进度汇报
+                        Progress::deleteAll('project_id=:id', [':id' => $p['id']]);
+                        //删除相关的未读消息列表
+                        UnreadMessage::deleteAll('project_id=:id', [':id' => $p['id']]);
+                        //删除项目
+                        Project::findOne($p['id'])->delete();
                     }
-                }    
-                ProjectUserRelations::deleteAll('user_id=:id', [':id' => $id]);
+                }                      
+                
+                //如果被删除用户是某项目参与人
+                if($project_user = ProjectUserRelations::find()->where(['user_id' => $id])->all())
+                {            
+                    foreach ($project_user as $p)
+                    {
+                        $project = Project::findOne($p['project_id']);
+                        $partner = explode(', ', $project->partner);
+                        if(!in_array($p, $partner))
+                        {
+                            continue;
+                        }else{
+                            //删除被删除用户的项目-用户关系
+                            ProjectUserRelations::deleteAll('project_id=:project_id and user_id=:user_id', [':project_id' => $p['project_id'], ':user_id' => $id]);
+                            //删除被删除用户的进度汇报
+                            Progress::deleteAll('project_id=:project_id and speaker_id=:id', [':project_id' => $p['project_id'], ':id' => $id]);
+                            //删除未读消息
+                            UnreadMessage::deleteAll('project_id=:project_id and user_id=:id', [':project_id' => $p['project_id'], ':id' => $id]);
+                            //更新项目参与人
+                            $project->partner = implode(', ', $this->in_array_delete($p, $partner));
+                            $project->save();
+                        }
+                    }
+                }  
+                //删除用户与公司的关系
+                UserCompanyRelations::deleteAll('user_id=:id', [':id' => $id]);
+                
                 $this->sendSessionMessage('user_deleted', '删除用户成功！');
                 return $this->redirect(['user/manage']);
             }

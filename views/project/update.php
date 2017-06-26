@@ -13,6 +13,13 @@ use yii\redactor\widgets\Redactor;
 
 <?= $form->field($model, 'project_content')->widget(Redactor::className()) ?>
 
-<?= Html::submitButton('提交')?>
+<?= Html::submitButton('提交', ['class' => 'btn btn-primary'])?>
+
+<?= Html::a('取消', Yii::$app->request->referrer, [
+    'class' => 'btn btn-danger',
+    'data' => [
+        'confirm' => '你确定要取消修改该项目吗？',
+    ],
+])?>
 
 <?php ActiveForm::end() ?>

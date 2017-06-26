@@ -39,7 +39,7 @@ class UserCompanyRelations extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => '用户_公司-主键',
+            'id' => '用户-公司 主键',
             'user_id' => '用户id',
             'company_id' => '公司id',
         ];

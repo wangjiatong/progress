@@ -18,6 +18,8 @@ $this->title = '登录';
     <h1><?= Html::encode($this->title) ?></h1>
     <!-- 注册成功后跳转登录页提示注册成功 -->
     <?= BaseController::displaySessionMessage('signup_success') ?>
+    <!-- 如果账号未激活，则提示 -->
+    <?= BaseController::displaySessionMessage('user_is_not_active', 'danger') ?>
     <p></p>
 
     <?php $form = ActiveForm::begin([

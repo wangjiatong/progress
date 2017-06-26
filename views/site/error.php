@@ -6,12 +6,13 @@
 /* @var $exception Exception */
 
 use yii\helpers\Html;
+use app\controllers\common\BaseController;
 
 $this->title = $name;
 ?>
 <div class="site-error">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <?= BaseController::displaySessionMessage('project_deleted') ?>
 
     <div class="alert alert-danger">
         <?= nl2br(Html::encode($message)) ?>
