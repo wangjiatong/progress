@@ -79,7 +79,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function validateAuthKey($authKey)
     {
-        return $this->auth_key === $auth_key;
+        return $this->auth_key === $authKey;
 //         throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
     }
     /**
