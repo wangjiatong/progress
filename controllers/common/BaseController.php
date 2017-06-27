@@ -16,7 +16,6 @@ class BaseController extends Controller
             'access'=> [
                 'class' => AccessControl::className(),
                 'denyCallback' => function ($rule, $action) {
-                    //因为虽然未通过激活验证，但账号已是登录态所以要先注销
                     if(!Yii::$app->user->isGuest)
                     {
                         Yii::$app->user->logout();

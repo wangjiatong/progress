@@ -28,6 +28,10 @@ class SiteController extends BaseController
                 'class' => AccessControl::className(),
 //                 'only' => ['logout', 'index'],
                 'denyCallback' => function($rule, $action){
+                    if(!Yii::$app->user->isGuest)
+                    {
+                        Yii::$app->user->logout();
+                    }
                     $this->sendSessionMessage('user_is_not_active', '您还未登陆或账号尚未激活！');                   
                     return $this->redirect(['user/login']);
                 },
