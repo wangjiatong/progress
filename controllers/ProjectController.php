@@ -11,6 +11,7 @@ use app\models\models\UnreadMessage;
 use yii\web\NotFoundHttpException;
 use app\models\models\User;
 use app\models\relations\NewProjectRelations;
+use app\models\email\SendMail;
 
 class ProjectController extends BaseController
 {
@@ -37,6 +38,17 @@ class ProjectController extends BaseController
         $model = new ProjectForm();
         if($model->load(Yii::$app->request->post()) && $model->create())
         {
+            //项目创建成功后向参与人发通知邮件
+            $partner = explode(', ', $model->partner);
+            foreach ($partner as $p)
+            {
+                $user = User::findOne($p);
+                $email = SendMail::sendEmail(
+                    $user->email,
+                    '翌银玖德：您已参与到由['.$user->name.']发起的['.$model->project_name.']项目中。',
+                    '您已参与到由['.$user->name.']发起的['.$model->project_name.']项目中。'
+                );
+            }
             Yii::$app->getSession()->setFlash('success', '项目创建成功！');
             return $this->redirect(['project/mine']);
         }
@@ -261,7 +273,7 @@ class ProjectController extends BaseController
         if($project->starter == Yii::$app->user->identity->id)
         {
             $oldPartner = explode(', ', Project::findOne($id)->partner);
-            $allUser = User::find()->select('id')->all();
+            $allUser = User::find()->select('id')->where(['status' => 1])->all();
             $newPartner = [];
             foreach ($allUser as $a)
             {
