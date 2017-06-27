@@ -154,10 +154,8 @@ class UserController extends BaseController
                     {
                         $project = Project::findOne($p['project_id']);
                         $partner = explode(', ', $project->partner);
-                        if(!in_array($p, $partner))
+                        if(in_array($id, $partner))
                         {
-                            continue;
-                        }else{
                             //删除被删除用户的项目-用户关系
                             ProjectUserRelations::deleteAll('project_id=:project_id and user_id=:user_id', [':project_id' => $p['project_id'], ':user_id' => $id]);
                             //删除被删除用户的进度汇报
@@ -165,7 +163,7 @@ class UserController extends BaseController
                             //删除未读消息
                             UnreadMessage::deleteAll('project_id=:project_id and user_id=:id', [':project_id' => $p['project_id'], ':id' => $id]);
                             //更新项目参与人
-                            $project->partner = implode(', ', $this->in_array_delete($p, $partner));
+                            $project->partner = implode(', ', $this->in_array_delete($id, $partner));
                             $project->save();
                         }
                     }

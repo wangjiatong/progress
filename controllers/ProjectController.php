@@ -175,7 +175,7 @@ class ProjectController extends BaseController
                 {
                     NewProjectRelations::deleteAll('project_id=:id', [':id' => $id]);
                 }
-                $this->sendSessionMessage('project_deleted');
+                $this->sendSessionMessage('project_deleted', '项目删除成功！');
                 return $this->redirect(['project/mine']);
             }else{
                 throw new NotFoundHttpException('项目删除失败！');
