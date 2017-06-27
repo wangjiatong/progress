@@ -3,9 +3,9 @@
 namespace app\controllers;
 
 use Yii;
-// use yii\filters\AccessControl;
+use yii\filters\AccessControl;
 // use yii\web\Controller;
-// use yii\filters\VerbFilter;
+use yii\filters\VerbFilter;
 // use app\models\LoginForm;
 // use app\models\ContactForm;
 use app\controllers\common\BaseController;
@@ -13,35 +13,57 @@ use app\models\models\Project;
 use app\models\relations\ProjectUserRelations;
 use yii\web\NotFoundHttpException;
 use app\models\relations\NewProjectRelations;
+use app\models\behaviors\ValidateAccountStatus;
 
 class SiteController extends BaseController
 {
     /**
      * @inheritdoc
      */
-//     public function behaviors()
-//     {
+    public function behaviors()
+    {
         
-//         return [
-//             'access' => [
-//                 'class' => AccessControl::className(),
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
 //                 'only' => ['logout', 'index'],
-//                 'rules' => [
-//                     [
-//                         'actions' => ['logout', 'index'],
-//                         'allow' => true,
-//                         'roles' => ['@'],
-//                     ],
-//                 ],
-//             ],
-//             'verbs' => [
-//                 'class' => VerbFilter::className(),
-//                 'actions' => [
-//                     'logout' => ['post'],
-//                 ],
-//             ],
-//         ];
-//     }
+                'denyCallback' => function($rule, $action){
+                    $this->sendSessionMessage('user_is_not_active', '您还未登陆或账号尚未激活！');                   
+                    return $this->redirect(['user/login']);
+                },
+                'rules' => [
+                    [
+                        'actions' => ['index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function($rule, $action){
+                            return ValidateAccountStatus::isActive();
+                        },
+                    ],
+                    [
+                        'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'],    
+                    ],
+                    [
+                        'actions' => ['captcha'],
+                        'allow' => true,
+                        'roles' => ['?'],    
+                    ],
+                    [
+                        'actions' => ['error'],
+                        'allow' =>true,
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
+        ];
+    }
 
     /**
      * @inheritdoc

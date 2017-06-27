@@ -38,7 +38,9 @@ $this->title = '登录';
         <?= $form->field($model, 'rememberMe')->checkbox([
             'template' => "<div class=\"col-lg-offset-1 col-lg-3\">{input} {label}</div>\n<div class=\"col-lg-8\">{error}</div>",
         ]) ?>
-
+        <div class="col-lg-offset-1">
+            <p>还没有账号？<?= Html::a('点击注册', ['user/signup']) ?></p>
+        </div>
         <div class="form-group">
             <div class="col-lg-offset-1 col-lg-11">
                 <?= Html::submitButton('登录', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>

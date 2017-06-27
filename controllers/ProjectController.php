@@ -310,6 +310,11 @@ class ProjectController extends BaseController
     
         }
     }
+    //修改合同状态
+    public function actionSetStatus($id)
+    {
+        
+    }
     
     
     

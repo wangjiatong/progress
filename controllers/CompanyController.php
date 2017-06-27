@@ -35,10 +35,6 @@ class CompanyController extends BaseController
                         return $this->isAdmin();
                     },
                 ],   
-                [
-                    'allow' => false,
-                    'roles' => ['?'],
-                ],
             ],
             
         ],

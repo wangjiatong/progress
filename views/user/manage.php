@@ -17,12 +17,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     <?= BaseController::displaySessionMessage('user_enabled') ?>
-    <?= BaseController::displaySessionMessage('no_user_enable_access') ?>
     <?= BaseController::displaySessionMessage('user_disabled') ?>
-    <?= BaseController::displaySessionMessage('no_user_disable_access') ?>
     <?= BaseController::displaySessionMessage('user_deleted') ?>
-    <?= BaseController::displaySessionMessage('no_user_delete_access') ?>
-<?php Pjax::begin(); ?>    <?= GridView::widget([
+
+<?php Pjax::begin(); ?>    
+    <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
@@ -79,5 +78,5 @@ $this->params['breadcrumbs'][] = $this->title;
                 },                    
             ],       
         ],
-    ]); ?>
+    ]); ?> 
 <?php Pjax::end(); ?></div>

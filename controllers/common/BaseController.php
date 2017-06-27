@@ -15,15 +15,15 @@ class BaseController extends Controller
         return [
             'access'=> [
                 'class' => AccessControl::className(),
-//                 'denyCallback' => function ($rule, $action) {
-//                     //因为虽然未通过激活验证，但账号已是登录态所以要先注销
-//                     if(!Yii::$app->user->isGuest)
-//                     {
-//                         Yii::$app->user->logout();
-//                         $this->sendSessionMessage('user_is_not_active', '您的账号尚未激活，暂无法使用！请联系管理员为您开通。');
-//                         return $this->redirect(['user/login']);
-//                     }
-//                 },
+                'denyCallback' => function ($rule, $action) {
+                    //因为虽然未通过激活验证，但账号已是登录态所以要先注销
+                    if(!Yii::$app->user->isGuest)
+                    {
+                        Yii::$app->user->logout();
+                    }
+                    $this->sendSessionMessage('user_is_not_active', '您还未登陆或账号尚未激活！');
+                    return $this->redirect(['user/login']);
+                },
                 'rules' => [
                     [
                         'allow' => true,
@@ -31,25 +31,6 @@ class BaseController extends Controller
                         'matchCallback' => function($rule, $action){
                             return ValidateAccountStatus::isActive();    
                         },
-                        'denyCallback' => function ($rule, $action) {
-                        //因为虽然未通过激活验证，但账号已是登录态所以要先注销
-                            if(!Yii::$app->user->isGuest)
-                            {
-                                Yii::$app->user->logout();
-                                $this->sendSessionMessage('user_is_not_active', '您的账号尚未激活，暂无法使用！请联系管理员为您开通。');
-                                return $this->redirect(['user/login']);
-                            }
-                        },
-                    ],
-                    [
-                        'allow' => true,
-                        'actions' => ['captcha'],
-                        'roles' => ['?'],    
-                    ],
-                    [
-                        'allow' => false,
-                        'actions' => ['index'],
-                        'roles' => ['?'],    
                     ],
                 ],
             ],
