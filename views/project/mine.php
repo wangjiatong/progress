@@ -17,6 +17,7 @@ use app\controllers\common\BaseController;
         ]);
     }
 ?>
+<?= BaseController::displaySessionMessage('project_deleted', 'success') ?>
 <div class="list-group">
     <?php foreach($model as $m):?>
         <a href="detail?id=<?= $m['id'] ?>" class="list-group-item"><?= $m['project_name'] ?> <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>

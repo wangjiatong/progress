@@ -4,7 +4,7 @@ namespace app\models\email;
 use yii\base\Model;
 use Yii;
 
-class SendMail extends Model
+class SendEmail extends Model
 {   
     public static function sendEmail($to, $subject, $body)
     {
