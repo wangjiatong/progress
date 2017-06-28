@@ -57,5 +57,29 @@ class Project extends ActiveRecord
             'created_at' => '创建时间',
         ];
     }
+    //更改项目状态，$id：项目id，$status：项目状态，默认为1进项中，0为结束，2为立项成功
+    public static function setStatus($id, $status)
+    {
+        if($project = self::findOne($id))
+        {
+            $project->status = $status;
+            if($project->save())
+            {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+    //根据项目状态显示文字提示
+    public function getStatus()
+    {
+        switch ($this->status)
+        {
+            case 0: return '已结束'; break;
+            case 1: return '立项中'; break;
+            case 2: return '进行中'; break;
+        }
+    }
     
 }

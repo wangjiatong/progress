@@ -4,12 +4,37 @@ use yii\redactor\widgets\Redactor;
 use yii\bootstrap\Html;
 use app\models\models\User;
 use yii\bootstrap\Alert;
+use app\controllers\common\BaseController;
 
 $partner_arr = explode(', ', $model->partner);
 $color_arr = ['primary', 'success', 'info', 'warning', 'danger'];
+//项目状态按钮颜色
+function buttonColor($status)
+{
+    switch ($status)
+    {
+        case 0: return 'warning'; break;
+        case 1: return 'info'; break;
+        case 2: return 'success'; break;
+    }
+}
 ?>
 <div class="page-header">
-    <h3><?= $model->project_name ?> <small></small></h3>
+    <h3><?= $model->project_name ?>
+<!--         <small>项目状态：</small> -->
+        <!-- 项目状态 开始 -->
+        <div class="btn-group">
+          <button type="button" class="btn btn-<?= buttonColor($model->status) ?> dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <?= $model->getStatus() ?> <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><?= Html::a('立项中', ['project/set-status', 'id' => $model->id, 'status' => 1], ['data' => ['confirm' => "你确定要更改项目状态为[立项中]吗？"]])?></li>
+            <li><?= Html::a('进行中', ['project/set-status', 'id' => $model->id, 'status' => 2], ['data' => ['confirm' => "你确定要更改项目状态为[进行中]吗？"]])?></li>
+            <li><?= Html::a('已结束', ['project/set-status', 'id' => $model->id, 'status' => 0], ['data' => ['confirm' => "你确定要更改项目状态为[已结束]吗？"]])?></li>
+          </ul>
+        </div>
+        <!-- 项目状态 结束 -->
+    </h3>
 </div>
 <div>
 
@@ -59,6 +84,7 @@ $color_arr = ['primary', 'success', 'info', 'warning', 'danger'];
                 ]);
             }
         ?>
+        <?= BaseController::displaySessionMessage('project_status_changed') ?>
         <?= $model->project_content ?>
         <br/>
     </div>
