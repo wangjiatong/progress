@@ -47,6 +47,7 @@ class ProjectController extends BaseController
                 $email = SendEmail::sendEmail(
                     $user->email,
                     '翌银玖德：您已参与到由['.$starter->name.']发起的['.$model->project_name.']项目中。',
+                    '您已参与到由['.$starter->name.']发起的['.$model->project_name.']项目中，请登录系统查看。'
                 );
             }
             Yii::$app->getSession()->setFlash('success', '项目创建成功！');
@@ -95,6 +96,7 @@ class ProjectController extends BaseController
                     $user = User::findOne($p);
                     SendEmail::sendEmail(
                         $user->email, 
+                        '翌银玖德:['.$speaker->name.']对['.Project::findOne($id)->project_name.']发表了新的进度汇报。', 
                         $comment->comment);
                     
                 }
@@ -330,9 +332,16 @@ class ProjectController extends BaseController
         }
     }
     //修改合同状态
-    public function actionSetStatus($id)
+    public function actionSetStatus($id, $status)
     {
-        
+        if(Project::findOne($id)->starter == Yii::$app->user->identity->id)
+        {
+            if(Project::setStatus($id, $status))
+            {
+                $this->sendSessionMessage('project_status_changed', '更改项目状态成功！');
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+        }
     }
     
     
