@@ -40,13 +40,13 @@ class ProjectController extends BaseController
         {
             //项目创建成功后向参与人发通知邮件
             $partner = $model->partner;
+            $starter = User::findOne($model->starter);
             foreach ($partner as $p)
             {
                 $user = User::findOne($p);
                 $email = SendEmail::sendEmail(
                     $user->email,
-                    '翌银玖德：您已参与到由['.$user->name.']发起的['.$model->project_name.']项目中。',
-                    '您已参与到由['.$user->name.']发起的['.$model->project_name.']项目中。'
+                    '翌银玖德：您已参与到由['.$starter->name.']发起的['.$model->project_name.']项目中。',
                 );
             }
             Yii::$app->getSession()->setFlash('success', '项目创建成功！');
@@ -76,6 +76,7 @@ class ProjectController extends BaseController
             {
                 $partner = Project::findOne($id)->partner;
                 $partner = explode(', ', $partner);
+                $speaker = User::findOne($comment->speaker_id);
                 foreach ($partner as $p)
                 {
                     if($p == $comment->speaker_id)
@@ -89,6 +90,12 @@ class ProjectController extends BaseController
                     $unread_message->status = 0;
                     $unread_message->created_at = Date('Y-m-d H:i:s');
                     $unread_message->save();
+                    
+                    //向参与人发送通知邮件
+                    $user = User::findOne($p);
+                    SendEmail::sendEmail(
+                        $user->email, 
+                        $comment->comment);
                     
                 }
                 Yii::$app->getSession()->setFlash('progress_added', '提交进度汇报成功！');
